@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+            "name": "Attach to Hermes application - Experimental",
+            "request": "attach",
+            "type": "reactnativedirect",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug Windows Hermes - Experimental",
+            "request": "launch",
+            "type": "reactnativedirect",
+            "cwd": "${workspaceFolder}",
+            "platform": "windows"
+        },
+        {
+            "type": "reactnative",
+            "request": "attach",
+            "name": "Attach to packager",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
