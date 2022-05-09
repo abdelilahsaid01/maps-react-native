@@ -1,8 +1,39 @@
-import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import MapView, { Callout, Circle, Marker, Overlay, Polygon, Polyline } from 'react-native-maps';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Dimensions, Image, ImageBackground, PermissionsAndroid, Pressable, StyleSheet, Text, View } from "react-native";
+import MapView, { Animated, Callout, Circle, Marker, Overlay, Polygon, Polyline } from 'react-native-maps';
+import * as Location from 'expo-location';
 
-const Home = () => {
+
+
+const Maps = ({ navigation }) => {
+
+    useEffect(() => {
+        (async () => {
+            // const isAndroid = (Platform.OS === 'android')
+
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            setCurrentLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.005282011989059754,
+                longitudeDelta: 0.008834190666675568,
+            })
+        })();
+    }, []);
+
+    const mapRef = useRef(null);
+
+    const [currentLocation, setCurrentLocation] = useState({
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.005282011989059754,
+        longitudeDelta: 0.008834190666675568,
+    })
+
     const [mellah, setRegion] = useState({
         latitude: 34.02673024556684,
         longitude: -6.829627510160208,
@@ -87,30 +118,40 @@ const Home = () => {
             latitude: 34.0249840,
             longitude: -6.8308196,
         }
-    ]
-    )
-
-
-
-
-
-
+    ])
     const test = (region) => {
         console.log(region)
     }
+
+    const [cam, setCam] = useState({
+        center: mellah, altitude: mellah.latitude, heading: 30, zoom: 16.4, pitch: 50
+    })
+    const goToMellah = () => {
+        mapRef.current.animateToRegion(mellah, 3 * 1000);
+        setTimeout(() => {
+            mapRef.current.setCamera(cam)
+        }, 3 * 1000)
+    };
+
     return (
         <View style={styles.container} >
             <MapView
                 style={styles.map}
-                initialRegion={mellah}
-                showsUserLocation={true}
-                showsPointsOfInterest={true}
+                // onMapReady={() => goToMellah()}
+                // initialRegion={mellah}
+                region={mellah}
+                showsUserLocation
+                // showsPointsOfInterest={true}
                 followsUserLocation={true}
-                showsMyLocationButton={true}
-                onRegionChange={res => test(res)}
+                // showsMyLocationButton={true}
+                // onRegionChange={res => test(res)}
                 provider={"google"}
-                initialCamera={{ center: mellah, altitude: mellah.latitude, heading: 30, zoom: 16.9, pitch: 50 }}
+                // onPress={() => requestCameraPermission()}
+                ref={mapRef} //assign our ref to this MapView
+            // initialCamera={{ center: mellah, altitude: mellah.latitude, heading: 30, zoom: 16.9, pitch: 50 }}
             >
+                {/* <Button onPress={() => test()} title="Go to Tokyo" /> */}
+
                 {/* <Circle
                     center={mellah}
                     radius={1000}
@@ -123,24 +164,32 @@ const Home = () => {
                 // strokeWidth={1}
                 // onPress={(e) => console.log(e)}
                 />
-                {mellahPlaces.map((res, i) => {
-                    return (
-                        <Marker
-                            key={res.key}
-                            coordinate={{ latitude: res.latitude, longitude: res.longitude }}
-                            title={res.title}
-                            description={res.description}
-                        />
-                    )
-                })}
-
-
-
+                {mellahPlaces.length > 0 && (
+                    mellahPlaces.map((res, i) => {
+                        return (
+                            <Marker
+                                key={res.key}
+                                coordinate={{ latitude: res.latitude, longitude: res.longitude }}
+                                title={res.title}
+                                description={res.description}
+                            // icon={require("./assets/icon_map.png")}
+                            // onPress={{ setisAndroid("false") }}
+                            >
+                                <Image source={require('../../assets/icon_map.png')} style={{ width: 40, height: 40 }} />
+                                <Text style={styles.textMarquer}>{res.title}</Text>
+                            </Marker>
+                        )
+                    })
+                )}
             </MapView>
-
+            <View>
+                <Button title="back" onPress={() => navigation.goBack()} />
+            </View>
         </View >
     )
 }
+
+
 
 
 const styles = StyleSheet.create({
@@ -154,9 +203,15 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
     },
+    textMarquer: {
+        fontSize: 10,
+        color: "green",
+        fontWeight: "bold"
+
+    }
 });
 
-export default Home
+export default Maps
 
 
 // <Marker

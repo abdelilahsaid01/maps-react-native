@@ -1,0 +1,13 @@
+npm install -g expo-cli // Install EXPO CLI insted of react native cli
+expo init nameOfProject --template blank  // Create new project
+npm strat // launch project
+- cd app-maps
+- npm start # you can open iOS, Android, or web from here, or run them directly with the commands below.
+- npm run android
+- npm run ios # requires an iOS device or macOS for access to an iOS simulator
+- npm run web
+
+https://snack.expo.dev/ // edit on web browser
+https://reactnavigation.org/docs/getting-started/
+https://reactnative.dev/docs/getting-started
+expo build:android // Build android project

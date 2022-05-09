@@ -1,4 +1,5 @@
-{
+import 'dotenv/config'
+export default {
     "expo": {
         "name": "app-maps",
         "slug": "app-maps",
@@ -26,7 +27,7 @@
             },
             "config": {
                 "googleMaps": {
-                    "apiKey": "AIzaSyDRwUUnMS-6gF0qCXQF6mdCTsioqjeWwDs"
+                    "apiKey": process.env.API_KEY_MAPS
                 }
             }
         },
